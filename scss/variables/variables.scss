@@ -1,0 +1,97 @@
+// new vars
+$page-background: var(--body_background, #111111);
+$cards_background: var(--cards_background, #1F1F1F);
+$blocks_in_cards_background: var(--blocks_in_cards_background, #2E2E2E);
+$casino_welcome_bonus_block_background: var(--casino_welcome_bonus_block_background, rgba(255, 187, 51, 0.1));
+$headings_color: var(--headings_color, #FFFFFF);
+$text_color: var(--text_color, #FFFFFF);
+$labels_color: var(--labels_color, #8D8D8D);
+$button_background_color: var(--button_background_color, #FF6A00);
+$button_background_color_hover: var(--button_background_color_hover, #CC5500);
+$button_text_color: var(--button_text_color, #FFFFFF);
+$border_color: var(--border_color, #2E2E2E);
+$link_color: var(--link_color, #0e0ed3);
+$link_color_hover: var(--link_color_hover, #0e0ed3);
+
+$table_thead_background_color: var(--table_thead_background_color, #FF6A00);
+$table_thead_text_color: var(--table_thead_text_color, #fff);
+$table_tr_background_color: var(--table_tr_background_color, #1F1F1F);
+$table_tr_text_color: var(--table_tr_text_color, #fff);
+
+$quote_line_color: var(--quote_line_color, #FFAA00);
+
+$lists_marker_color: var(--lists_marker_color, #FFAA00);
+
+$redirection_brand_color: var(--redirection_brand_color, orange);
+
+// Header & Footer
+
+$header_and_footer_background: var(--header_and_footer_background, #222);
+$header_and_footer_menu_link_color: var(--header_and_footer_menu_link_color, #fff);
+$header_and_footer_menu_link_color_hover: var(--header_and_footer_menu_link_color_hover, #fff);
+$header_inner_blocks_background : var(--header_inner_blocks_background, #333333);
+$header_and_footer_border_color : var(--header_and_footer_border_color, #333333);
+$footer_text_color:var(--footer_text_color, #808080);
+
+$overall-rating-background: var(--overall_rating_background, #FFAA00);
+$overall_rating_text_color: var(--overall_rating_text_color, #161616);
+
+// Need to add
+$border-base-color: var(--border_color, #2E2E2E);
+$overall-rating-body-background: var(--overall-rating-body-background, #333333);
+$overall-rating-brand-color: var(--overall-rating-brand-color, #ff720d);
+$supporting_negative_variant: var(--supportive_negative_variant, red);
+$supporting_negative: var(--supportive_negative, #FF4D61);
+//
+
+
+//Typography
+$h1-font-size: var(--h1-font-size, 24px);
+$h1-font-weight: var(--h1-font-weight, 700);
+$h2-font-size: var(--h2-font-size, 20px);
+$h2-font-weight: var(--h2-font-weight, 700);
+$h3-font-size: var(--h3-font-size, 18px);
+$h3-font-weight: var(--h3-font-weight, 700);
+$h4-font-size: var(--h4-font-size, 16px);
+$h4-font-weight: var(--h4-font-weight, 700);
+$body-font-family: var(--body-font-family, 'Roboto', sans-serif);
+$body-font-size: var(--body-font-size, 14px);
+$body-font-weight: var(--body-font-weight, 400);
+
+$labels-font-size: var(--labels-font-size, 12px);
+$labels-font-weight: var(--labels-font-weight, 400);
+$label_values-font-size: var(--label_values-font-size, 12px);
+$label_values-font-weight: var(--label_values-font-weight, 400);
+
+$header_link-font-weight : var(--header_link-font-weight, normal);
+$header_link-font-size : var(--header_link-font-size, 14px);
+
+$footer_link-font-weight: var(--footer_link-font-weight, normal);
+$footer_link-font-size: var(--footer_link-font-size, 14px);
+$footer_labels-font-weight: var(--footer_labels-font-weight, normal);
+$footer_labels-font-size: var(--footer_labels-font-size, 12px);
+$footer_copyrights-font-weight: var(--footer_copyrights-font-weight, normal);
+$footer_copyrights-font-size: var(--footer_copyrights-font-size, 12px);
+
+$error_404_heading-font-size: var(--error_404_heading-font-size, 80px);
+$error_404_heading-font-weight: var(--error_404_heading-font-weight, normal);
+$error_404_text-font-size: var(--error_404_text-font-size, 18px);
+$error_404_text-font-weight: var(--error_404_text-font-weight, normal);
+
+$breadcrumbs-font-size: var(--breadcrumbs-font-size, 12px);
+$breadcrumbs-font-weight: var(--breadcrumbs-font-weight, normal);
+
+//Single Casino
+
+
+$sections_heading-font-size: var(--sections_heading-font-size, 20px);
+$sections_heading-font-weight: var(--sections_heading-font-weight, 600);
+
+
+$sticky_nav_info_label_heading-font-size: var(--sticky_nav_info_label_heading-font-size, 20px);
+$sticky_nav_info_label_heading-font-weight: var(--sticky_nav_info_label_heading-font-weight, 700);
+$sticky_nav_info_label-font-size: var(--sticky_nav_info_label-font-size, 12px);
+$sticky_nav_info_label-font-weight: var(--sticky_nav_info_label-font-weight, 700);
+
+
+// new vars ends

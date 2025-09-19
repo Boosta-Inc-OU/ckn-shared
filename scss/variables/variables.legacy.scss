@@ -1,0 +1,91 @@
+/*
+* Settings for the `<body>` element.
+*/
+$body-bg: #111111 !default;
+$body-bg2: #222222 !default;
+$body-bg3: #333333 !default;
+$body-color: #ffffff !default;
+$brand-color: #ff720d !default;
+$brand-color2: #FFAA00 !default;
+
+/*
+* Single page typography
+*/
+$background-primary: #1F1F1F !default;
+$background-alternative: #2E2E2E !default;
+$color-primary: #ffffff !default;
+$color-alternative: #8D8D8D !default;
+$color-third: #C6C6C6 !default;
+$color-fourth: #F4F4F4 !default;
+$color-fifth: #161616 !default;
+$color-sixth: #4D8AFF !default;
+
+/*
+* Bootstrap variables
+*/
+$primary: #111111 !default;
+$secondary: #222 !default;
+
+/* Typography
+* Font, line-height, and color for body text, headings, and more.
+*/
+$font-size-base: 1rem !default;
+
+$font-family-base: 'Open Sans', 'sans-serif' !default;
+$font-family-secondary: 'Open Sans', 'sans-serif' !default;
+
+//$h1-font-size: $font-size-base * calc(28 / 16) !default;
+//$h2-font-size: $font-size-base * calc(26 / 16) !default;
+//$h3-font-size: $font-size-base * calc(24 / 16) !default;
+//$h4-font-size: $font-size-base * calc(21 / 16) !default;
+//$h5-font-size: $font-size-base * calc(19 / 16) !default;
+//$h6-font-size: $font-size-base * calc(17 / 16) !default;
+
+$headings-margin-bottom: 25px !default;
+$headings-line-height: 1.3 !default;
+$headings-font-family: $font-family-secondary !default;
+
+$link-color: #198CFE !default;
+$link-hover-color: #198CFE !default;
+$link-transition: all .2s ease-in-out !default;
+$green: #26C280 !default;
+$img-base-path: '~theme/images' !default;
+$list-item-img: '~theme/images/svg/common/bullet-paw.svg' !default;
+$transition-base: all .4s ease-in-out !default;
+
+/*
+* Grid breakpoints
+* Define the minimum dimensions at which your layout will change,
+* adapting to different screen sizes, for use in media queries.
+*/
+
+$grid-breakpoints: (
+	xs: 0,
+	ss: 360px,
+	sm: 576px,
+	md: 768px,
+	lg: 992px,
+	xl: 1200px,
+	xxl: 1367px
+) !default;
+
+/*
+* Grid containers
+* Define the maximum width of `.container` for different screen sizes.
+*/
+$container-max-widths: (
+	sm: 540px,
+	md: 720px,
+	lg: 960px,
+	xl: 1140px,
+	xxl: 1260px
+) !default;
+
+$b-radius: 5px !default;
+$b-radius2: 10px !default;
+
+/**
+ * TOC
+ */
+$toc-block-bg: #1F1F1F !default;
+$toc-item-color: #80ACFF !default;

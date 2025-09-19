@@ -1,0 +1,91 @@
+@use "sass:map";
+@use "sass:list";
+
+$grid-breakpoints: (
+	xs: 0,
+	ss: 360px,
+	sm: 576px,
+	md: 768px,
+	lg: 992px,
+	xl: 1200px,
+	xxl: 1367px
+);
+
+@function breakpoint-min($name) {
+	@return map.get($grid-breakpoints, $name);
+}
+
+@function breakpoint-next($name) {
+	$keys: map.keys($grid-breakpoints);
+	$index: list.index($keys, $name);
+	@if $index == null {
+		@return null;
+	}
+	@if $index < list.length($keys) {
+		@return list.nth($keys, $index + 1);
+	}
+	@return null;
+}
+
+@function breakpoint-max($name) {
+	$next: breakpoint-next($name);
+	@if $next == null {
+		@return null;
+	}
+
+	@return calc(breakpoint-min($next) - 0.02px);
+}
+
+@mixin media-breakpoint-up($name) {
+	$min: breakpoint-min($name);
+	@if $min != null and $min != 0 {
+		@media (min-width: #{$min}) {
+			@content;
+		}
+	} @else {
+		@content;
+	}
+}
+
+@mixin media-breakpoint-down($name) {
+	$max: breakpoint-max($name);
+	@if $max != null {
+		@media (max-width: #{$max}) {
+			@content;
+		}
+	} @else {
+		@content;
+	}
+}
+
+@mixin media-breakpoint-between($lower, $upper) {
+	$min: breakpoint-min($lower);
+	$max: breakpoint-max($upper);
+
+	@if $min != null and $min != 0 and $max != null {
+		@media (min-width: #{$min}) and (max-width: #{$max}) {
+			@content;
+		}
+	} @else if $max == null {
+		@include media-breakpoint-up($lower) {
+			@content;
+		}
+	} @else {
+		@media (max-width: #{$max}) {
+			@content;
+		}
+	}
+}
+
+@mixin media-breakpoint-only($name) {
+	$next: breakpoint-next($name);
+	@if $next == null {
+		@include media-breakpoint-up($name) {
+			@content;
+		}
+	} @else {
+		@include media-breakpoint-between($name, $name) {
+			@content;
+		}
+	}
+}

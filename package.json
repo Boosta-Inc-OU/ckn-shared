@@ -1,0 +1,9 @@
+{
+  "name": "@refactoryteam/ckn-shared",
+  "version": "1.0.0",
+  "description": "Shared resources for Casino Kit Next",
+  "license": "ISC",
+  "type": "module",
+  "repository": "git+https://github.com/Boosta-Inc-OU/ckn-shared.git",
+  "author": "Yurii Pokhylko"
+}
