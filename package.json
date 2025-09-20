@@ -1,6 +1,6 @@
 {
   "name": "@refactoryteam/ckn-shared",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shared resources for Casino Kit Next",
   "license": "ISC",
   "type": "module",

@@ -1,4 +1,4 @@
-import {trackVisibilityCasino} from "track-visibility";
+import {trackVisibilityCasino} from "./track-visibility.js";
 
 export default class CasinoTableAjaxLoader {
 	bufferSize = 1;
