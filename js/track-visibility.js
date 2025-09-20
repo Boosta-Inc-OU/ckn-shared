@@ -100,7 +100,7 @@ export function trackVisibilityOthers() {
  * @param fragment Casinos fragment loaded after click on "Show more" button
  * @param onload Page onload flag
  */
-export function trackVisibilityCasino(fragment, onload = false) {
+export function trackVisibilityCasino(fragment = null, onload = false) {
 	if ( geo_casino_data.geo_status === 0 || !onload ) { // Skip tracking on page onload if GEO is enabled
 		let elements = document.querySelectorAll('.js-constructor-casino [data-' + params.dataset.wcpUtConvertElement + ']');
 
