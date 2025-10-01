@@ -24,17 +24,31 @@ $lists_marker_color: var(--lists_marker_color, #FFAA00);
 
 $redirection_brand_color: var(--redirection_brand_color, orange);
 
+$bonus_color: var(--bonus_color, #FFAA00);
+
+$tags_background: var(--tags_background, #333333);
+$tags_color: var(--tags_color, #FFFFFF);
+
+$pagination_background: var(--pagination_background, #222222);
+$pagination_background_active: var(--pagination_background_active, #ff720d);
+$pagination_text_color: var(--pagination_text_color, #FFFFFF);
+
 // Header & Footer
 
 $header_and_footer_background: var(--header_and_footer_background, #222);
 $header_and_footer_menu_link_color: var(--header_and_footer_menu_link_color, #fff);
 $header_and_footer_menu_link_color_hover: var(--header_and_footer_menu_link_color_hover, #fff);
-$header_inner_blocks_background : var(--header_inner_blocks_background, #333333);
-$header_and_footer_border_color : var(--header_and_footer_border_color, #333333);
-$footer_text_color:var(--footer_text_color, #808080);
+$header_inner_blocks_background: var(--header_inner_blocks_background, #333333);
+$header_and_footer_border_color: var(--header_and_footer_border_color, #333333);
+$footer_text_color: var(--footer_text_color, #808080);
+$footer_menu_labels_color: var(--footer_menu_labels_color, #808080);
 
 $overall-rating-background: var(--overall_rating_background, #FFAA00);
 $overall_rating_text_color: var(--overall_rating_text_color, #161616);
+
+$rating_stars_active: var(--rating_stars_active, gold);
+$rating_stars_inactive: var(--rating_stars_inactive, gray);
+$payments_gradient_color: var(--payments_gradient_color, #1f1f1f);
 
 // Need to add
 $border-base-color: var(--border_color, #2E2E2E);
@@ -54,6 +68,10 @@ $h3-font-size: var(--h3-font-size, 18px);
 $h3-font-weight: var(--h3-font-weight, 700);
 $h4-font-size: var(--h4-font-size, 16px);
 $h4-font-weight: var(--h4-font-weight, 700);
+$h5-font-size: var(--h5-font-size, 15px);
+$h5-font-weight: var(--h5-font-weight, 400);
+$h6-font-size: var(--h6-font-size, 14px);
+$h6-font-weight: var(--h6-font-weight, 400);
 $body-font-family: var(--body-font-family, 'Roboto', sans-serif);
 $body-font-size: var(--body-font-size, 14px);
 $body-font-weight: var(--body-font-weight, 400);
@@ -63,8 +81,15 @@ $labels-font-weight: var(--labels-font-weight, 400);
 $label_values-font-size: var(--label_values-font-size, 12px);
 $label_values-font-weight: var(--label_values-font-weight, 400);
 
-$header_link-font-weight : var(--header_link-font-weight, normal);
-$header_link-font-size : var(--header_link-font-size, 14px);
+$header_link-font-weight: var(--header_link-font-weight, normal);
+$header_link-font-size: var(--header_link-font-size, 14px);
+
+$header_mobile_menu_active_heading_background: var(--header_mobile_menu_active_heading_background, #222);
+$header_mobile_menu_active_heading_color: var(--header_mobile_menu_active_heading_color, #fff);
+
+$header_mobile_back_button_background: var(--header_mobile_back_button_background, #FF6A00);
+$header_mobile_back_button_border_color:  var(--header_mobile_back_button_border_color, #FF6A00);
+$header_mobile_back_button_color: var(--header_mobile_back_button_color, #fff);
 
 $footer_link-font-weight: var(--footer_link-font-weight, normal);
 $footer_link-font-size: var(--footer_link-font-size, 14px);
@@ -73,6 +98,10 @@ $footer_labels-font-size: var(--footer_labels-font-size, 12px);
 $footer_copyrights-font-weight: var(--footer_copyrights-font-weight, normal);
 $footer_copyrights-font-size: var(--footer_copyrights-font-size, 12px);
 
+$footer_disclaimer-font-weight: var(--footer_disclaimer-font-weight, normal);
+$footer_disclaimer-font-size: var(--footer_disclaimer-font-size, 12px);
+
+
 $error_404_heading-font-size: var(--error_404_heading-font-size, 80px);
 $error_404_heading-font-weight: var(--error_404_heading-font-weight, normal);
 $error_404_text-font-size: var(--error_404_text-font-size, 18px);
@@ -80,6 +109,14 @@ $error_404_text-font-weight: var(--error_404_text-font-weight, normal);
 
 $breadcrumbs-font-size: var(--breadcrumbs-font-size, 12px);
 $breadcrumbs-font-weight: var(--breadcrumbs-font-weight, normal);
+
+$breadcrumbs-font-weight: var(--breadcrumbs-font-weight, normal);
+
+$faq_question-font-size: var(--faq_question-font-size, 16px);
+$faq_question-font-weight: var(--faq_question-font-weight, normal);
+
+$faq_answer-font-size: var(--faq_answer-font-size, 14px);
+$faq_answer-font-weight: var(--faq_answer-font-weight, normal);
 
 //Single Casino
 
