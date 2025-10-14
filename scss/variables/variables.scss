@@ -50,6 +50,11 @@ $rating_stars_active: var(--rating_stars_active, gold);
 $rating_stars_inactive: var(--rating_stars_inactive, gray);
 $payments_gradient_color: var(--payments_gradient_color, #1f1f1f);
 
+// Casinos to Avoid
+$casinos_to_avoid_card_background: var(--casinos_to_avoid_card_background, #ffe5e5);
+$casinos_to_avoid_card_title: var(--casinos_to_avoid_card_title, #301b42);
+//
+
 // Need to add
 $border-base-color: var(--border_color, #2E2E2E);
 $overall-rating-body-background: var(--overall-rating-body-background, #333333);
