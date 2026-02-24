@@ -144,4 +144,27 @@ $sticky_nav_info_label-font-weight: var(--sticky_nav_info_label-font-weight, 700
 
 $input_background: var(--input_background, #2e2e2e);
 $input_placeholder_color: var(--input_placeholder_color, #999);
+
+
+// Takeaways
+$takeaway_background: linear-gradient(110deg,rgba(43,0,255,.04) 17.67%,rgba(169,2,240,.04) 40.09%,rgba(237,85,151,.04) 60.24%,rgba(255,97,35,.04) 75.44%,rgba(255,212,0,.04) 93.68%),#fff;
+
+$color1: var(--gradient_color1, #2b00ff);
+$color2: var(--gradient_color2, #a902f0);
+
+
+$takeaway_gradient: linear-gradient(
+    110deg,
+    #{$color1} 0%,
+    #{$color2} 100%
+);
+
+$takeaway_text_color: var(--takeaway_text_color, #301B42);
+$takeaway_dots_color: var(--dots_color, #279260);
+
+
+// Quotation
+$quote_heading_color: var(--quote_heading_color, #fff);
+$quote_text_color: var(--quote_text_color, #FFFFFF96);
+$quote_author_color: var(--quote_author_color, #FFB224);
 // new vars ends
