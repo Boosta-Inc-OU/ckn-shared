@@ -18,7 +18,11 @@ $container-max: none;
 }
 
 .container {
-	max-width: if($container-max != none, $container-max, 100%);
+	@if $container-max != none {
+		max-width: $container-max;
+	} @else {
+		max-width: 100%;
+	}
 
 	@each $name, $value in $container-max-widths {
 		@include media-breakpoint-up($name) {
