@@ -167,4 +167,12 @@ $takeaway_dots_color: var(--dots_color, #279260);
 $quote_heading_color: var(--quote_heading_color, #fff);
 $quote_text_color: var(--quote_text_color, #FFFFFF96);
 $quote_author_color: var(--quote_author_color, #FFB224);
+
+// How we rate
+$how-we-rate--outline-base: var(--how_we_rate__outline_base, #D4C7DE);
+$how-we-rate--outline-border: var(--how_we_rate__outline_border, #D4C7DE66);
+$how-we-rate--heading-color: var(--how_we_rate__heading_color, #301B42);
+$how-we-rate--text-color: var(--how_we_rate__text_color, #5D5266);
+$how-we-rate--number-background: var(--how_we_rate__number_background, #FF0055);
+$how-we-rate--number-color: var(--how_we_rate__number_color, #FFFFFF);
 // new vars ends
