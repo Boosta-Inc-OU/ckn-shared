@@ -56,6 +56,9 @@ $rating_stars_active: var(--rating_stars_active, gold);
 $rating_stars_inactive: var(--rating_stars_inactive, gray);
 $payments_gradient_color: var(--payments_gradient_color, #1f1f1f);
 
+$payments_gradient: linear-gradient(180deg, rgba(31, 31, 31, 0) 0%, #{$payments_gradient_color}  75%);
+
+
 // Casinos to Avoid
 $casinos_to_avoid_card_background: var(--casinos_to_avoid_card_background, #ffe5e5);
 $casinos_to_avoid_card_title: var(--casinos_to_avoid_card_title, #301b42);
