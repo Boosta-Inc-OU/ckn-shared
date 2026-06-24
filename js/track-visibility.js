@@ -4,6 +4,12 @@
 
 const params = document.querySelector('#wcp_ut_data_attributes_keeper');
 
+function getScrollPercentage() {
+	const scrollTop = window.scrollY;
+	const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+	return docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
+}
+
 export class trackVisibilityClass {
     constructor(callback, options = {}) {
         this.callback = callback;
@@ -52,11 +58,23 @@ export class trackVisibilityClass {
 	sendEvent(element) {
 		const data = {
 			event: 'GAevent',
-			eventName: 'viewCasino',
-			element: element.getAttribute('data-' + params.dataset.wcpUtConvertElement),
-			bname: element.getAttribute('data-' + params.dataset.wcpUtCasinoName),
-			bid: element.getAttribute('data-' + params.dataset.wcpUtCasinoId),
+			eventCategory: 'viewCasino',
+			eventAction: element.getAttribute('data-' + params.dataset.wcpUtConvertElement),
+			eventLabel: element.getAttribute('data-' + params.dataset.wcpUtCasinoName),
+			eventLabelID: element.getAttribute('data-' + params.dataset.wcpUtCasinoId),
 			aid: element.getAttribute('data-' + params.dataset.wcpUtApikosId),
+			bonusName: element.getAttribute('data-' + params.dataset.wcpUtBonusName) || '',
+			scrollPercentage: getScrollPercentage(),
+			pageType: params.dataset.wcpUtPageType || '',
+			geoUser: params.dataset.wcpUtUserGeo || '',
+			userID: params.dataset.wcpUtUserId || '',
+		}
+
+		const casinoBlock = element.closest('.js-constructor-casino');
+		if (casinoBlock) {
+			data.geoPosition = Array.from(
+				document.querySelectorAll('.js-constructor-casino')
+			).indexOf(casinoBlock) + 1;
 		}
 
 		if ( element.getAttribute('data-' + params.dataset.wcpUtPosition) ) {
@@ -101,7 +119,8 @@ export function trackVisibilityOthers() {
  * @param onload Page onload flag
  */
 export function trackVisibilityCasino(fragment = null, onload = false) {
-	if ( geo_casino_data.geo_status === 0 || !onload ) { // Skip tracking on page onload if GEO is enabled
+	const geoStatus = typeof window.geo_casino_data !== 'undefined' ? window.geo_casino_data.geo_status : 0;
+	if ( geoStatus === 0 || !onload ) { // Skip tracking on page onload if GEO is enabled
 		let elements = document.querySelectorAll('.js-constructor-casino [data-' + params.dataset.wcpUtConvertElement + ']');
 
 		if ( fragment ) {
