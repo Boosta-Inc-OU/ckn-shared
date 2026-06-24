@@ -1,1 +1,1 @@
-# CKN: Shared Resources for Casino Kit Next v1.0.23
+# CKN: Shared Resources for Casino Kit Next v1.0.24
