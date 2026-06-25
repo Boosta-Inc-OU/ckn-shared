@@ -95,11 +95,22 @@ export class trackVisibilityClass {
 
 export function trackVisibility(elements) {
 	if ( params.dataset.wcpUtDataLayer === 'on' && params.dataset.wcpUtDataLayerVisibility === 'on' ) {
+		if ( !window._cknObservedElements ) {
+			window._cknObservedElements = new Set();
+		}
+
+		const fresh = Array.from(elements).filter(el => !window._cknObservedElements.has(el));
+
+		if ( !fresh.length ) return;
+
         const observer = new trackVisibilityClass(element => {
 			observer.sendEvent(element);
         });
 
-        elements.forEach(element => observer.observe(element));
+		fresh.forEach(element => {
+			window._cknObservedElements.add(element);
+			observer.observe(element);
+		});
     }
 }
 
