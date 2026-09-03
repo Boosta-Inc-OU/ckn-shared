@@ -31,8 +31,9 @@ $secondary: #222 !default;
 */
 $font-size-base: 1rem !default;
 
-$font-family-base: 'Open Sans', 'sans-serif' !default;
-$font-family-secondary: 'Open Sans', 'sans-serif' !default;
+// Themeable via the stylization layer's CSS variables; the literal stays as the fallback.
+$font-family-base: var(--font-family, var(--body-font-family, 'Open Sans', sans-serif)) !default;
+$font-family-secondary: var(--font-family, var(--body-font-family, 'Open Sans', sans-serif)) !default;
 
 //$h1-font-size: $font-size-base * calc(28 / 16) !default;
 //$h2-font-size: $font-size-base * calc(26 / 16) !default;
