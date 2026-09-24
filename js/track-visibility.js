@@ -135,10 +135,18 @@ export function trackVisibilityCasino(fragment = null, onload = false) {
 		let elements = document.querySelectorAll('.js-constructor-casino [data-' + params.dataset.wcpUtConvertElement + ']');
 
 		if ( fragment ) {
+			const selector = '[data-' + params.dataset.wcpUtConvertElement + ']';
+
 			elements = [];
 			fragment.forEach( item => {
-				elements.push(item);
-				elements.push(...item.querySelectorAll('[data-' + params.dataset.wcpUtConvertElement + ']'));
+				// A row container carries the brand data but not the CTA attribute, so reporting it
+				// unconditionally sent an extra impression with an empty action - and only for rows
+				// that arrived over ajax, since the page-load sweep selects by this same attribute.
+				if ( item.matches(selector) ) {
+					elements.push(item);
+				}
+
+				elements.push(...item.querySelectorAll(selector));
 			} );
 		}
 
