@@ -67,11 +67,43 @@ healthy one.
 `tests/contract.test.js` freezes both the export list and one reference payload. A diff there is
 either an analytics change agreed with whoever owns the GTM configuration, or a regression.
 
+## Scoped tracking: `trackComponent()`
+
+`trackComponent( slug, selector )` is what a component should call. It takes the CTA elements inside
+that component's own block, claims them in the registry, applies the component's own switch and
+observes them - and touches nothing else on the page.
+
+It exists because the page-wide sweeps below do not do that, and the consequences reached QA on
+2026-10-13. Measured on a casino page of the stand: one component was observing all 22 CTA elements
+of the page, another component's sidebar and a third one's logo included. No component tracked its
+own markup, nothing in the traffic said which component an impression belonged to, and coverage
+depended on which plugins happened to be active and in which order they loaded.
+
+Two details in it are load-bearing:
+
+- **The elements are claimed before the switches are consulted.** A page-wide sweep skips whatever
+  is already claimed, so claiming is what lets a component that is switched off actually stay
+  silent. Elements left unclaimed would be reported by the sweep, under the global flags, with the
+  component's own switch ignored.
+- **The per-component switch is read from the resolved lists only for a declared component.** The
+  core publishes `data-wcp-ut-track-components` (since `ckn-core` 1.0.45) for exactly that: a slug
+  missing from `data-wcp-ut-track-off` means "enabled" for a declared component and nothing at all
+  for an undeclared one, which can never be listed. Reading the lists without that distinction
+  reports "enabled" while the master switch is off - a defect this codebase has shipped once. Against
+  an older core the attribute is absent and the global flags decide, as before.
+
+`tests/component.test.js` covers it, including both of those; the mutation table is in
+`docs/testing.md`.
+
 ## The guard, and the hole in it
 
 Several components sweep the **whole page** for CTA elements rather than their own block, so three
 to five of them observe the same element. What keeps the impression single is `window._cknObservedElements`,
 a registry the `trackVisibility()` helper reads and writes.
+
+Those sweeps are being removed component by component in favour of `trackComponent()`; while any of
+them is still on a page, a scoped component can find its own elements already claimed and go quiet,
+so the last page-wide sweep left on a page has to be the one that runs last.
 
 Two properties of that design are load-bearing:
 
@@ -96,7 +128,7 @@ yarn test:describe     # spells out what each test verified
 npx vitest run --sequence.shuffle   # order independence
 ```
 
-vitest with jsdom. 43 tests, no build step, no network.
+vitest with jsdom. 67 tests, no build step, no network.
 
 Details, the deliberately uncovered parts, and the findings the suite recorded along the way:
 `docs/testing.md`.

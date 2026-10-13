@@ -23,6 +23,10 @@ describe( 'the public surface', () => {
 		const module = await loadTrackVisibility();
 
 		expect( Object.keys( module ).sort() ).toEqual( [
+			'isComponentDeclared',
+			'isComponentEnabled',
+			'isComponentVisibilityEnabled',
+			'trackComponent',
 			'trackVisibility',
 			'trackVisibilityCasino',
 			'trackVisibilityClass',

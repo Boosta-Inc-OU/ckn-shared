@@ -186,6 +186,21 @@ export function renderCta( values = {}, { parent = document.body, keeper = DEFAU
 	return element;
 }
 
+/**
+ * A component's own block: a container with a `js-` class, as the templates print it.
+ *
+ * The class carries no hash on a real page - `postcss-modules` leaves `js-` alone - which is why a
+ * scoped tracker can rely on it at all.
+ */
+export function renderComponentBlock( className, { parent = document.body } = {} ) {
+	const block = document.createElement( 'div' );
+
+	block.className = 'a1b2c3d ' + className;
+	parent.appendChild( block );
+
+	return block;
+}
+
 /** A casino constructor block, the only container the shared sweep treats specially. */
 export function renderCasinoBlock() {
 	const block = document.createElement( 'div' );
