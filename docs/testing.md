@@ -43,6 +43,25 @@ fixture copies real values instead of inventing plausible ones.
 | `registry.test.js` | the duplicate guard, and the case it does not cover |
 | `sweeps.test.js` | which elements each of the three ready-made sweeps claims |
 | `contract.test.js` | the export list and one frozen reference payload |
+| `component.test.js` | `trackComponent()`: scoping, the registry, and the per-component switch |
+
+### `component.test.js` and its negative control
+
+`trackComponent()` is the scoped entry point a component should call. The suite was written against
+a defect that had already shipped, so every test was shown to fail on a broken version before it was
+trusted:
+
+| Mutation | Expected result |
+|---|---|
+| Sweep the whole page again instead of the component's block | 2 failures of 67 |
+| Claim the elements after the switches are consulted, not before | 1 failure |
+| Read the resolved lists without checking the declared set | 3 failures |
+| Ignore the resolved lists and trust the global flags only | 4 failures |
+| Forget that a block can carry the CTA attribute itself | 2 failures |
+
+The third and fourth are the two halves of the same question and are worth keeping apart: reading
+the lists for an undeclared component reports "enabled" with the master switch off, and ignoring
+them for a declared one silences a component an administrator deliberately switched on.
 
 ### The two tests that are about a future change
 
