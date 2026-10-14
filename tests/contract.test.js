@@ -27,6 +27,7 @@ describe( 'the public surface', () => {
 			'isComponentEnabled',
 			'isComponentVisibilityEnabled',
 			'trackComponent',
+			'trackRemaining',
 			'trackVisibility',
 			'trackVisibilityCasino',
 			'trackVisibilityClass',

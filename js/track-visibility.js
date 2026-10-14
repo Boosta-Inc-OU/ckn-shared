@@ -303,6 +303,58 @@ export function trackComponent( slug, selector, options = {} ) {
 }
 
 /**
+ * The page's last-resort sweep: every CTA element no component claimed for itself.
+ *
+ * `trackComponent()` is what a component calls, and once every component that prints CTA elements
+ * calls it this function has nothing left to do. Until then some elements have no owner - a block
+ * reusing another component's templates, a sticky banner, the logos in the footer - and without a
+ * sweep their impressions would simply stop. So this exists to be removed, and the count it returns
+ * is the measure of how far that is: on a page where it reports zero, every element has an owner.
+ *
+ * It must run after every component has claimed its own, which is a scheduling decision and
+ * therefore the caller's: the components claim from their `DOMContentLoaded` handlers, so the
+ * caller defers this past that queue. Run too early it is not a fallback but a competitor, and the
+ * component that loses is the one whose bundle happened to come later.
+ *
+ * Unlike `trackVisibilityOthers()` it excludes nothing by class. The registry already says what is
+ * taken, and the casino constructor's own sweep has run by then; rows that arrive later over ajax
+ * are not in the page yet and are handled by that component when they are.
+ *
+ * The switches still decide whether anything is sent - `trackVisibility()` applies them - but the
+ * returned list does not depend on them, so the count stays usable as a measure with tracking off.
+ *
+ * @param {Object}     [options]
+ * @param {ParentNode} [options.root=document]
+ * @param {Element}    [options.keeper]
+ *
+ * @return {Element[]} The unclaimed elements, before the switches are consulted.
+ */
+export function trackRemaining( options = {} ) {
+	const keeper = options.keeper !== undefined ? options.keeper : params;
+
+	if ( ! keeper || ! keeper.dataset ) {
+		return [];
+	}
+
+	const convertElement = keeper.dataset.wcpUtConvertElement;
+
+	if ( ! convertElement ) {
+		return [];
+	}
+
+	const root = options.root || document;
+	const registry = window._cknObservedElements instanceof Set ? window._cknObservedElements : null;
+	const all = Array.from( root.querySelectorAll( '[data-' + convertElement + ']' ) );
+	const unclaimed = registry ? all.filter( element => ! registry.has( element ) ) : all;
+
+	if ( unclaimed.length ) {
+		trackVisibility( unclaimed );
+	}
+
+	return unclaimed;
+}
+
+/**
  * Track visibility on whole page except casino constructor blocks
  */
 export function trackVisibilityOthers() {

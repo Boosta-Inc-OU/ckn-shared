@@ -103,6 +103,24 @@ knowing when reading the reports.
 
 `tests/component.test.js` covers all of it; the mutation table is in `docs/testing.md`.
 
+## `trackRemaining()` - the sweep that exists to be deleted
+
+Every CTA element no component claimed for itself. Nine components still print CTA elements and
+call nothing, so without a sweep their impressions would stop; `ckn-core` 1.0.47 runs this one per
+page, deferred past every component's `DOMContentLoaded` handler, and publishes the count as
+`CKN.unclaimed`.
+
+That count is the measure of this function's own obsolescence: zero on a page means every element
+there has an owner. Measured on the stand today - homepage 0, slot page 0, casino page **9**
+(ckn-related-casinos, which reuses another component's templates and has no tracker).
+
+Two properties are deliberate. It excludes nothing by class, unlike `trackVisibilityOthers()`: the
+registry already says what is taken. And the list it returns does not depend on the switches - the
+switches still decide what is *sent* - so the count stays usable as a measure with tracking off.
+
+The scheduling is the caller's, not this function's: run without the deferral it is not a fallback
+but a competitor, and the component that loses is whichever bundle happened to load later.
+
 ## The guard, and the hole in it
 
 Several components sweep the **whole page** for CTA elements rather than their own block, so three
@@ -136,7 +154,7 @@ yarn test:describe     # spells out what each test verified
 npx vitest run --sequence.shuffle   # order independence
 ```
 
-vitest with jsdom. 74 tests, no build step, no network.
+vitest with jsdom. 81 tests, no build step, no network.
 
 Details, the deliberately uncovered parts, and the findings the suite recorded along the way:
 `docs/testing.md`.

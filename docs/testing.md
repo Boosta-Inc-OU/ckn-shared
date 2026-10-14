@@ -60,6 +60,8 @@ trusted:
 | Forget that a block can carry the CTA attribute itself | 2 failures |
 | With `onBlockVisible`, report every element of the component rather than the block's own | 1 failure |
 | Ignore `onBlockVisible` and watch the elements as usual | 3 failures |
+| Have `trackRemaining()` take every element instead of the unclaimed ones | 4 failures |
+| Make its returned count depend on the switches | 1 failure |
 
 One harness change came out of this: the fake `IntersectionObserver` now drops elements it no
 longer watches, the way a real one does. Without that the "reported once" rule could not be tested

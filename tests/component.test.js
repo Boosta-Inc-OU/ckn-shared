@@ -17,6 +17,7 @@ import {
 	events,
 	loadTrackVisibility,
 	observers,
+	renderCasinoBlock,
 	renderComponentBlock,
 	renderCta,
 	renderKeeper,
@@ -472,5 +473,111 @@ describe( 'arguments it refuses', () => {
 		const { trackComponent } = await loadTrackVisibility();
 
 		expect( trackComponent( SLUG, '.js-promo-casino' ) ).toEqual( [] );
+	} );
+} );
+
+/**
+ * `trackRemaining()` - the page's last-resort sweep, and the measure of its own obsolescence.
+ *
+ * Every CTA element a component did not claim for itself. Nine components still print CTA elements
+ * and call nothing, so without this their impressions would stop; the count it returns is what says
+ * when it can finally be deleted.
+ *
+ * Scheduling is the caller's job and is not tested here: it is one `setTimeout` in the core runtime
+ * and has no behaviour of its own. What is tested is that the function takes exactly what nobody
+ * claimed, and that the count means the same thing whether tracking is on or off - otherwise it
+ * could not be used as a measure.
+ */
+describe( 'trackRemaining', () => {
+	beforeEach( () => resetPage() );
+
+	it( 'takes the elements no component claimed, and leaves the claimed ones alone', async () => {
+		declaredKeeper();
+		const block = renderComponentBlock( 'js-promo-casino' );
+		const owned = renderCta( { convertElement: 'promo-casino' }, { parent: block } );
+		const orphan = renderCta( { convertElement: 'block-of-logos' } );
+
+		const { trackComponent, trackRemaining } = await loadTrackVisibility();
+
+		trackComponent( SLUG, '.js-promo-casino' );
+
+		expect( trackRemaining() ).toEqual( [ orphan ] );
+		expect( window._cknObservedElements.has( owned ) ).toBe( true );
+		expect( window._cknObservedElements.has( orphan ) ).toBe( true );
+	} );
+
+	it( 'reports nothing when every element already has an owner', async () => {
+		declaredKeeper();
+		const block = renderComponentBlock( 'js-promo-casino' );
+
+		renderCta( { convertElement: 'promo-casino' }, { parent: block } );
+
+		const { trackComponent, trackRemaining } = await loadTrackVisibility();
+
+		trackComponent( SLUG, '.js-promo-casino' );
+
+		expect( trackRemaining() ).toEqual( [] );
+		expect( observers ).toHaveLength( 1 );
+	} );
+
+	it( 'takes everything on a page where no component claimed anything', async () => {
+		declaredKeeper();
+		const first = renderCta( { convertElement: 'block-of-logos' } );
+		const second = renderCta( { convertElement: 'sticky_banner_cta' } );
+
+		const { trackRemaining } = await loadTrackVisibility();
+
+		expect( trackRemaining() ).toEqual( [ first, second ] );
+	} );
+
+	it( 'reports an element once: a second pass finds it claimed', async () => {
+		declaredKeeper();
+		const orphan = renderCta( { convertElement: 'block-of-logos' } );
+
+		const { trackRemaining } = await loadTrackVisibility();
+
+		expect( trackRemaining() ).toEqual( [ orphan ] );
+		expect( trackRemaining() ).toEqual( [] );
+
+		observers[ 0 ].intersect( orphan );
+
+		expect( events() ).toHaveLength( 1 );
+	} );
+
+	/*
+	 * The count has to mean "elements with no owner", not "elements that were reported", or it
+	 * cannot be used to tell when the sweep may be deleted.
+	 */
+	it( 'counts the unclaimed elements even with tracking switched off', async () => {
+		renderKeeper( { 'data-wcp-ut-data-layer': 'off' } );
+		const orphan = renderCta( { convertElement: 'block-of-logos' } );
+
+		const { trackRemaining } = await loadTrackVisibility();
+
+		expect( trackRemaining() ).toEqual( [ orphan ] );
+		expect( observers ).toHaveLength( 0 );
+		expect( events() ).toEqual( [] );
+	} );
+
+	it( 'excludes nothing by class: the casino constructor is covered by the registry, not a selector', async () => {
+		declaredKeeper();
+		const casino = renderCasinoBlock();
+		const inside = renderCta( { convertElement: 'cart_button' }, { parent: casino } );
+
+		const { trackVisibilityCasino, trackRemaining } = await loadTrackVisibility();
+
+		trackVisibilityCasino();
+
+		expect( trackRemaining() ).toEqual( [] );
+		expect( window._cknObservedElements.has( inside ) ).toBe( true );
+	} );
+
+	it( 'does nothing on a page with no keeper, and does not throw', async () => {
+		renderCta( { convertElement: 'block-of-logos' } );
+
+		const { trackRemaining } = await loadTrackVisibility();
+
+		expect( () => trackRemaining() ).not.toThrow();
+		expect( trackRemaining() ).toEqual( [] );
 	} );
 } );
