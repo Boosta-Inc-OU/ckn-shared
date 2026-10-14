@@ -86,6 +86,52 @@ describe( 'trackVisibilityClass', () => {
 		expect( logged[ 0 ] ).toEqual( events()[ 0 ] );
 	} );
 
+	/*
+	 * The browser hands several entries to one call. Until 1.0.30 the handler called the callback
+	 * before unobserving and caught nothing, so one failing element took every element after it in
+	 * the same batch down with it - and left itself observed, which the browser never revisits.
+	 * A missing `dataLayer` was the way this actually happened in production.
+	 */
+	it( 'reports the rest of a batch when one element throws', async () => {
+		renderKeeper();
+		const first = renderCta( { convertElement: 'cart_button' } );
+		const second = renderCta( { convertElement: 'sidebar' } );
+		const third = renderCta( { convertElement: 'cart_logo' } );
+
+		const { trackVisibilityClass } = await loadTrackVisibility();
+
+		const seen = [];
+		const observer = new trackVisibilityClass( element => {
+			if ( element === first ) {
+				throw new Error( 'callback blew up' );
+			}
+
+			seen.push( element );
+		} );
+
+		[ first, second, third ].forEach( element => observer.observe( element ) );
+		observers[ 0 ].intersect( first, second, third );
+
+		expect( seen ).toEqual( [ second, third ] );
+	} );
+
+	it( 'releases an element whose callback threw, rather than watching it forever', async () => {
+		renderKeeper();
+		const cta = renderCta( { convertElement: 'cart_button' } );
+
+		const { trackVisibilityClass } = await loadTrackVisibility();
+
+		const observer = new trackVisibilityClass( () => {
+			throw new Error( 'callback blew up' );
+		} );
+
+		observer.observe( cta );
+		observers[ 0 ].intersect( cta );
+
+		expect( observers[ 0 ].unobserved ).toContain( cta );
+		expect( observers[ 0 ].observed.has( cta ) ).toBe( false );
+	} );
+
 	it( 'lets a caller override the observer options', async () => {
 		renderKeeper();
 

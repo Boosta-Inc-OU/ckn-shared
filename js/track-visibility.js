@@ -27,8 +27,17 @@ export class trackVisibilityClass {
     _handleIntersect(entries, observer) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                this.callback(entry.target);
-                this.unobserve(entry.target); // Run only once, then stop observing
+                // Run only once: release the element before calling out, so a callback that throws
+                // can neither leave it observed nor abort the rest of this batch. The browser hands
+                // several entries to one call, and an exception thrown here used to lose every
+                // element after it - silently, because nothing on the page reports it.
+                this.unobserve(entry.target);
+
+                try {
+                    this.callback(entry.target);
+                } catch (e) {
+                    console.error('[ckn-shared] visibility callback failed', e);
+                }
             }
         });
     }
@@ -81,7 +90,11 @@ export class trackVisibilityClass {
 			data.position = element.getAttribute('data-' + params.dataset.wcpUtPosition);
 		}
 
-		dataLayer.push(data);
+		// GTM may not have defined dataLayer yet, or at all: a site with no container, a container
+		// that failed to load, or one injected after the first element came into view. Queue the
+		// event the way GTM's own snippet does rather than throwing.
+		window.dataLayer = window.dataLayer || [];
+		window.dataLayer.push(data);
 
 		if ( this.options.isTest ) {
 			this.logEvent(data);

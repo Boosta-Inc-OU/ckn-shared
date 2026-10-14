@@ -154,7 +154,7 @@ yarn test:describe     # spells out what each test verified
 npx vitest run --sequence.shuffle   # order independence
 ```
 
-vitest with jsdom. 81 tests, no build step, no network.
+vitest with jsdom. 84 tests, no build step, no network.
 
 Details, the deliberately uncovered parts, and the findings the suite recorded along the way:
 `docs/testing.md`.

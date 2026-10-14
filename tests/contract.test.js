@@ -76,12 +76,13 @@ describe( 'the public surface', () => {
 	} );
 
 	/*
-	 * sendEvent writes to a bare `dataLayer`, not to `window.dataLayer = window.dataLayer || []`.
-	 * On a page where GTM has not defined the array - a stand without the container, or a container
-	 * that failed to load - this throws instead of doing nothing. Pinned as it behaves; the
-	 * components that build their own payload do guard it, this one does not.
+	 * GTM is not guaranteed to have defined `dataLayer` by the time the first element comes into
+	 * view: a site with no container, a container that failed to load or was blocked, one injected
+	 * late. Until 1.0.30 sendEvent() pushed to a bare `dataLayer` and threw a ReferenceError there,
+	 * which `_handleIntersect()` did not catch - so the throw also lost every other element in the
+	 * same IntersectionObserver batch. It now creates the array the way GTM's own snippet does.
 	 */
-	it( 'throws rather than staying silent on a page where GTM never defined dataLayer', async () => {
+	it( 'creates dataLayer on a page where GTM never defined it, instead of throwing', async () => {
 		renderKeeper();
 		const cta = renderCta( { convertElement: 'cart_button' } );
 
@@ -89,7 +90,30 @@ describe( 'the public surface', () => {
 		const observer = new trackVisibilityClass( () => {} );
 
 		delete globalThis.dataLayer;
+		delete window.dataLayer;
 
-		expect( () => observer.sendEvent( cta ) ).toThrow( ReferenceError );
+		expect( () => observer.sendEvent( cta ) ).not.toThrow();
+		expect( window.dataLayer ).toHaveLength( 1 );
+		expect( window.dataLayer[ 0 ] ).toMatchObject( { event: 'GAevent', eventCategory: 'viewCasino' } );
+	} );
+
+	/*
+	 * And an existing queue is appended to, never replaced: GTM's snippet runs first on a healthy
+	 * page and whatever it queued has to survive.
+	 */
+	it( 'appends to a dataLayer that already exists', async () => {
+		renderKeeper();
+		const cta = renderCta( { convertElement: 'cart_button' } );
+
+		const { trackVisibilityClass } = await loadTrackVisibility();
+		const observer = new trackVisibilityClass( () => {} );
+
+		window.dataLayer = [ { event: 'gtm.js' } ];
+		globalThis.dataLayer = window.dataLayer;
+
+		observer.sendEvent( cta );
+
+		expect( window.dataLayer ).toHaveLength( 2 );
+		expect( window.dataLayer[ 0 ] ).toEqual( { event: 'gtm.js' } );
 	} );
 } );

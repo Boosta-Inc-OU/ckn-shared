@@ -21,8 +21,9 @@ keeper needs a different module instance. `loadTrackVisibility()` resets the mod
 re-imports; nothing in the suite imports the module statically. A test that renders a keeper after
 loading the module would be testing the previous test's keeper.
 
-**Pushes go to a bare `dataLayer`.** Not `window.dataLayer = window.dataLayer || []` — the plain
-identifier. The harness defines the global so the rest of the behaviour is observable at all.
+**`dataLayer` is defined up front, as GTM's snippet would.** The harness creates it so most tests
+read like a live page; the tests about a page without a container delete it themselves. Since 1.0.30
+the module creates it when missing, so deleting it is a scenario rather than a crash.
 
 **IntersectionObserver is faked, not polyfilled.** The fake never decides on its own that something
 became visible: a test states which element crossed the threshold and when. No timers, no waiting,
@@ -113,14 +114,31 @@ applies the membership test `trackVisibilityDynamic` already used, so the two dy
 
 Pinned by two tests in `sweeps.test.js`: the row is not reported without the attribute, and still is with it.
 
+**An impression batch died with the first failing callback (1.0.30).** `sendEvent()` pushed to a bare
+`dataLayer`, and `_handleIntersect()` called the callback *before* `unobserve` with nothing catching. Where GTM
+had not defined the array by the first intersection - a site with no container, a container blocked or injected
+late - the first element threw a `ReferenceError`, stayed observed (so the browser never revisited it) and took
+every element after it in the same IntersectionObserver batch with it. Nothing on the page reported any of that.
+
+`sendEvent()` now does `window.dataLayer = window.dataLayer || []` as GTM's own snippet does, and
+`_handleIntersect()` unobserves first and wraps the callback in a `try/catch` that logs
+`[ckn-shared] visibility callback failed`. Payload, threshold, registry and switches are untouched.
+
+Found by a second developer investigating the same QA report on a stand without GTM, and adopted here on its
+merits. It is **not** what the 2026-10-13 report was about: the site QA tested carries the standard container
+snippet, which creates `dataLayer` inline before any component runs. The report's cause was ownership - see the
+section on `trackComponent()` in `CLAUDE.md`. Two separate defects in the same function.
+
+Pinned by four tests: two in `contract.test.js` (created when missing, appended to when present) and two in
+`observer.test.js` (the rest of a batch still reports, and the failing element is released).
+
 ## Findings recorded while writing the suite
 
 Each is pinned by a test that asserts the behaviour as it is today, not as it should be.
 
 1. **No keeper, no mercy.** On a page without `#wcp_ut_data_attributes_keeper` the module throws a
    `TypeError` on the first sweep — `params` is `null` and `params.dataset` is read unguarded.
-2. **`dataLayer` is assumed to exist.** `sendEvent()` throws a `ReferenceError` where GTM has not
-   defined the array. Components that build their own payload guard it; this one does not.
+2. ~~**`dataLayer` is assumed to exist.**~~ Fixed in 1.0.30 - see the finding below.
 3. **The class carries no switch check.** `trackVisibilityClass.sendEvent()` sends regardless of the
    admin switches — only the helper gates. Every component that extends the class repeats the check
    in its own initialiser, and one that forgets reports impressions with tracking switched off.
