@@ -92,8 +92,16 @@ Two details in it are load-bearing:
   reports "enabled" while the master switch is off - a defect this codebase has shipped once. Against
   an older core the attribute is absent and the global flags decide, as before.
 
-`tests/component.test.js` covers it, including both of those; the mutation table is in
-`docs/testing.md`.
+**`onBlockVisible`** reports a block's elements when the block itself comes into view, rather than
+each element when it does. For contents collapsed behind a spoiler: Chrome does not render what is
+inside a closed `<details>`, so an observer on those elements never fires however far the reader
+scrolls - `ckn-similar-offers` sent no impressions at all until the reader opened the block. The
+mode answers "did the reader reach the block", which is what the analytics is for there, and the
+block's own heading is visible the whole time. Decided by the product owner on 2026-10-14. An
+impression in this mode is not comparable with one from an element seen in full, which is worth
+knowing when reading the reports.
+
+`tests/component.test.js` covers all of it; the mutation table is in `docs/testing.md`.
 
 ## The guard, and the hole in it
 
@@ -128,7 +136,7 @@ yarn test:describe     # spells out what each test verified
 npx vitest run --sequence.shuffle   # order independence
 ```
 
-vitest with jsdom. 67 tests, no build step, no network.
+vitest with jsdom. 74 tests, no build step, no network.
 
 Details, the deliberately uncovered parts, and the findings the suite recorded along the way:
 `docs/testing.md`.

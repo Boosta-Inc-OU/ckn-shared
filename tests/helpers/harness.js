@@ -72,10 +72,23 @@ class FakeIntersectionObserver {
 		this.disconnected = true;
 	}
 
-	/** Declares that these elements crossed the threshold, in this order. */
+	/**
+	 * Declares that these elements crossed the threshold, in this order.
+	 *
+	 * Elements this observer no longer watches are dropped, the way a real one does. Without that
+	 * the "reported once" rule cannot be tested at all: the tracker unobserves after the first
+	 * report, and a fake that kept delivering would report a second time and look like a defect in
+	 * the code under test.
+	 */
 	intersect( ...elements ) {
+		const live = elements.filter( element => this.observed.has( element ) );
+
+		if ( ! live.length ) {
+			return;
+		}
+
 		this.callback(
-			elements.map( target => ( { target, isIntersecting: true } ) ),
+			live.map( target => ( { target, isIntersecting: true } ) ),
 			this
 		);
 	}

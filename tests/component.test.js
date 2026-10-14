@@ -312,6 +312,132 @@ describe( 'the switches', () => {
 	} );
 } );
 
+/**
+ * `onBlockVisible` - report the block's elements when the block is reached, not when each element
+ * is seen.
+ *
+ * For a block whose contents sit behind a spoiler. Chrome does not render the contents of a closed
+ * `<details>`, so an IntersectionObserver on them never fires however far the reader scrolls: the
+ * offer cards of ckn-similar-offers produced no impression at all until the reader opened the
+ * spoiler. That is literally correct - the cards were not seen - but the question the analytics is
+ * meant to answer there is whether the reader reached the block, and the block's own heading is
+ * visible the whole time. Decided by the product owner on 2026-10-14.
+ *
+ * The trade-off is deliberate and worth knowing when reading the reports: an impression in this
+ * mode means "the reader reached the block", so its click-through rate is not comparable with that
+ * of a card that was on screen in full.
+ */
+describe( 'onBlockVisible', () => {
+	beforeEach( () => resetPage() );
+
+	it( 'reports every element of a block when the block itself comes into view', async () => {
+		declaredKeeper();
+		const block = renderComponentBlock( 'js-similar-offers' );
+		const first = renderCta( { convertElement: 'similar_offers', casinoName: '7 Bit' }, { parent: block } );
+		const second = renderCta( { convertElement: 'similar_offers', casinoName: 'Rolletto' }, { parent: block } );
+
+		const { trackComponent } = await loadTrackVisibility();
+
+		expect( trackComponent( SLUG, '.js-similar-offers', { onBlockVisible: true } ) ).toEqual( [ first, second ] );
+
+		// The block is what is watched, not the cards.
+		expect( Array.from( observers[ 0 ].observed ) ).toEqual( [ block ] );
+
+		observers[ 0 ].intersect( block );
+
+		expect( events().map( entry => entry.eventLabel ) ).toEqual( [ '7 Bit', 'Rolletto' ] );
+	} );
+
+	it( 'reports nothing while the block has not been reached', async () => {
+		declaredKeeper();
+		const block = renderComponentBlock( 'js-similar-offers' );
+
+		renderCta( { convertElement: 'similar_offers' }, { parent: block } );
+
+		const { trackComponent } = await loadTrackVisibility();
+
+		trackComponent( SLUG, '.js-similar-offers', { onBlockVisible: true } );
+
+		expect( events() ).toEqual( [] );
+	} );
+
+	it( 'reports each block separately, with only its own elements', async () => {
+		declaredKeeper();
+		const first = renderComponentBlock( 'js-similar-offers' );
+		const second = renderComponentBlock( 'js-similar-offers' );
+		const mine = renderCta( { convertElement: 'similar_offers', casinoName: 'First' }, { parent: first } );
+
+		renderCta( { convertElement: 'similar_offers', casinoName: 'Second' }, { parent: second } );
+
+		const { trackComponent } = await loadTrackVisibility();
+
+		trackComponent( SLUG, '.js-similar-offers', { onBlockVisible: true } );
+
+		expect( observers[ 0 ].observed.size ).toBe( 2 );
+
+		observers[ 0 ].intersect( first );
+
+		expect( events().map( entry => entry.eventLabel ) ).toEqual( [ 'First' ] );
+		expect( events()[ 0 ].eventLabel ).toBe( 'First' );
+		expect( mine ).toBeTruthy();
+	} );
+
+	it( 'reports a block once, so scrolling back past it sends nothing more', async () => {
+		declaredKeeper();
+		const block = renderComponentBlock( 'js-similar-offers' );
+
+		renderCta( { convertElement: 'similar_offers' }, { parent: block } );
+
+		const { trackComponent } = await loadTrackVisibility();
+
+		trackComponent( SLUG, '.js-similar-offers', { onBlockVisible: true } );
+
+		observers[ 0 ].intersect( block );
+		observers[ 0 ].intersect( block );
+
+		expect( events() ).toHaveLength( 1 );
+		expect( observers[ 0 ].unobserved ).toEqual( [ block ] );
+	} );
+
+	it( 'still claims the elements, so no other sweep reports them element by element', async () => {
+		declaredKeeper();
+		const block = renderComponentBlock( 'js-similar-offers' );
+		const card = renderCta( { convertElement: 'similar_offers' }, { parent: block } );
+
+		const { trackComponent, trackVisibilityOthers } = await loadTrackVisibility();
+
+		trackComponent( SLUG, '.js-similar-offers', { onBlockVisible: true } );
+		trackVisibilityOthers();
+
+		expect( observers ).toHaveLength( 1 );
+		expect( window._cknObservedElements.has( card ) ).toBe( true );
+	} );
+
+	it( 'obeys the component switch like any other mode', async () => {
+		declaredKeeper( { 'data-wcp-ut-track-visibility-off': SLUG } );
+		const block = renderComponentBlock( 'js-similar-offers' );
+
+		renderCta( { convertElement: 'similar_offers' }, { parent: block } );
+
+		const { trackComponent } = await loadTrackVisibility();
+
+		expect( trackComponent( SLUG, '.js-similar-offers', { onBlockVisible: true } ) ).toEqual( [] );
+		expect( observers ).toHaveLength( 0 );
+	} );
+
+	it( 'watches the elements, not the block, when the mode is off', async () => {
+		declaredKeeper();
+		const block = renderComponentBlock( 'js-similar-offers' );
+		const card = renderCta( { convertElement: 'similar_offers' }, { parent: block } );
+
+		const { trackComponent } = await loadTrackVisibility();
+
+		trackComponent( SLUG, '.js-similar-offers' );
+
+		expect( Array.from( observers[ 0 ].observed ) ).toEqual( [ card ] );
+	} );
+} );
+
 describe( 'arguments it refuses', () => {
 	beforeEach( () => resetPage() );
 

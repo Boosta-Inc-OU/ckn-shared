@@ -200,8 +200,12 @@ export function isComponentVisibilityEnabled( keeper, slug ) {
  * @param {string}      slug     The component's slug, as declared to `ckn/core/tracking/components`.
  * @param {string}      selector Selector of the component's own block.
  * @param {Object}      [options]
- * @param {ParentNode}  [options.root=document] Where to look - an inserted fragment, for ajax.
- * @param {Element}     [options.keeper]        The keeper element; defaults to the page's own.
+ * @param {ParentNode}  [options.root=document]          Where to look - an inserted fragment, for ajax.
+ * @param {Element}     [options.keeper]                 The keeper element; defaults to the page's own.
+ * @param {boolean}     [options.onBlockVisible=false]   Report a block's elements when the block
+ *                      itself comes into view, rather than each element when it does. For a block
+ *                      whose contents are collapsed behind a spoiler, where the question the
+ *                      analytics answers is whether the reader reached the block at all.
  *
  * @return {Element[]} The elements now under observation. Empty is a normal answer: no block on the
  *                     page, the component switched off, or the elements already claimed by someone
@@ -226,9 +230,14 @@ export function trackComponent( slug, selector, options = {} ) {
 
 	const root = options.root || document;
 	const ctaSelector = '[data-' + convertElement + ']';
-	const elements = [];
+
+	// Kept per block rather than in one flat list: with onBlockVisible a block reports its own
+	// elements and nobody else's, and a page may hold several blocks of the same component.
+	const blocks = [];
 
 	root.querySelectorAll( selector ).forEach( block => {
+		const elements = [];
+
 		// A block may carry the CTA attribute itself - a referral card is one element, not a
 		// container with one inside - so matching the block is not the same as searching it.
 		if ( block.matches( ctaSelector ) ) {
@@ -236,9 +245,13 @@ export function trackComponent( slug, selector, options = {} ) {
 		}
 
 		block.querySelectorAll( ctaSelector ).forEach( element => elements.push( element ) );
+
+		if ( elements.length ) {
+			blocks.push( { block, elements } );
+		}
 	} );
 
-	if ( ! elements.length ) {
+	if ( ! blocks.length ) {
 		return [];
 	}
 
@@ -247,7 +260,12 @@ export function trackComponent( slug, selector, options = {} ) {
 	}
 
 	const registry = window._cknObservedElements;
-	const fresh = elements.filter( element => ! registry.has( element ) );
+
+	blocks.forEach( entry => {
+		entry.fresh = entry.elements.filter( element => ! registry.has( element ) );
+	} );
+
+	const fresh = blocks.reduce( ( all, entry ) => all.concat( entry.fresh ), [] );
 
 	if ( ! fresh.length ) {
 		return [];
@@ -257,6 +275,24 @@ export function trackComponent( slug, selector, options = {} ) {
 
 	if ( ! isComponentVisibilityEnabled( keeper, slug ) ) {
 		return [];
+	}
+
+	if ( options.onBlockVisible ) {
+		const blockObserver = new trackVisibilityClass( seen => {
+			const entry = blocks.find( candidate => candidate.block === seen );
+
+			if ( entry ) {
+				entry.fresh.forEach( element => blockObserver.sendEvent( element ) );
+			}
+		} );
+
+		blocks.forEach( entry => {
+			if ( entry.fresh.length ) {
+				blockObserver.observe( entry.block );
+			}
+		} );
+
+		return fresh;
 	}
 
 	const observer = new trackVisibilityClass( element => observer.sendEvent( element ) );

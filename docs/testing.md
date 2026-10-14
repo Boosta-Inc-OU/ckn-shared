@@ -58,6 +58,13 @@ trusted:
 | Read the resolved lists without checking the declared set | 3 failures |
 | Ignore the resolved lists and trust the global flags only | 4 failures |
 | Forget that a block can carry the CTA attribute itself | 2 failures |
+| With `onBlockVisible`, report every element of the component rather than the block's own | 1 failure |
+| Ignore `onBlockVisible` and watch the elements as usual | 3 failures |
+
+One harness change came out of this: the fake `IntersectionObserver` now drops elements it no
+longer watches, the way a real one does. Without that the "reported once" rule could not be tested
+at all - the tracker unobserves after the first report, and a fake that kept delivering reported a
+second time and looked like a defect in the code under test.
 
 The third and fourth are the two halves of the same question and are worth keeping apart: reading
 the lists for an undeclared component reports "enabled" with the master switch off, and ignoring
